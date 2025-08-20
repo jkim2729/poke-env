@@ -26,6 +26,7 @@ class Pokemon:
         "_data",
         "_effects",
         "_first_turn",
+        "_gen",
         "_gender",
         "_heightm",
         "_item",
@@ -42,6 +43,7 @@ class Pokemon:
         "_protect_counter",
         "_shiny",
         "_stats",
+        "_stats_current",
         "_revealed",
         "_species",
         "_status",
@@ -67,6 +69,7 @@ class Pokemon:
     ):
         # Base data
         self._data = GenData.from_gen(gen)
+        self._gen = gen
 
         # Species related attributes
         self._base_stats: Dict[str, int]
@@ -112,6 +115,14 @@ class Pokemon:
         self._protect_counter: int = 0
         self._revealed: bool = False
         self._stats: Dict[str, Optional[int]] = {
+            "hp": None,
+            "atk": None,
+            "def": None,
+            "spa": None,
+            "spd": None,
+            "spe": None,
+        }
+        self._stats_current: Dict[str, Optional[int]] = {
             "hp": None,
             "atk": None,
             "def": None,
@@ -171,6 +182,32 @@ class Pokemon:
             self._boosts[stat] = 6
         elif self._boosts[stat] < -6:
             self._boosts[stat] = -6
+
+    def boost_to_num(self,generation, boost):
+        # Note: Accuracy and Evasion use a different boost function
+        if boost < -6 or boost > 6:
+            raise ValueError("Stage must be between -6 and +6 inclusive.")
+        
+        boost_index = boost + 6  # Convert stage to index 0-12
+        
+        if generation == 1 or generation == 2:
+            gen_1_2 = [
+                25/100, 28/100, 33/100, 40/100, 50/100, 66/100,
+                100/100,
+                150/100, 200/100, 250/100, 300/100, 350/100, 400/100
+            ]
+            return gen_1_2[boost_index]
+        
+        elif generation >= 3:
+            gen_3_plus = [
+                2/8, 2/7, 2/6, 2/5, 2/4, 2/3,
+                2/2,
+                3/2, 4/2, 5/2, 6/2, 7/2, 8/2
+            ]
+            return gen_3_plus[boost_index]
+        
+        else:
+            raise ValueError("Generation must be a positive integer.")
 
     def cant_move(self):
         self._first_turn = False
@@ -395,6 +432,8 @@ class Pokemon:
 
         if store:
             self._stats["hp"] = self._max_hp
+            if self._gen == 1:
+                self._update_current_stats({"hp":self._max_hp})
 
     def set_temporary_ability(self, ability: Optional[str]):
         if ability is not None:
@@ -442,12 +481,19 @@ class Pokemon:
         self._active = False
         self.clear_boosts()
         self._clear_effects()
+        if self._gen == 1:
+            self._update_current_stats(self.stats)
+            if self._status == Status.BRN and self.stats['atk']:
+                self._update_current_stats({'atk': self.stats['atk'] // 2})
+            elif self._status == Status.PAR and self.stats['spe']:
+                self._update_current_stats({'spe': self.stats['spe'] // 4})
+
         self._first_turn = False
         self._must_recharge = False
         self._preparing_move = None
         self._preparing_target = None
         self._protect_counter = 0
-
+        
         if self._status == Status.TOX:
             self._status_counter = 0
 
@@ -468,6 +514,10 @@ class Pokemon:
         self._update_from_pokedex(into.species, store_species=False)
         self._current_hp = int(current_hp)
         self._boosts = into.boosts.copy()
+
+    def _update_current_stats(self,new_stats):
+
+        self._stats_current.update(new_stats) 
 
     def _update_from_pokedex(self, species: str, store_species: bool = True):
         species = to_id_str(species)
@@ -577,6 +627,8 @@ class Pokemon:
         if "stats" in request_pokemon:
             for stat in request_pokemon["stats"]:
                 self._stats[stat] = request_pokemon["stats"][stat]
+                if self._gen == 1:
+                    self._update_current_stats(self._stats)
 
     def _update_from_teambuilder(self, tb: TeambuilderPokemon):
         if tb.nickname is not None and tb.species is None:
@@ -613,6 +665,8 @@ class Pokemon:
             )
             for stat, val in zip(["hp", "atk", "def", "spa", "spd", "spe"], stats):
                 self._stats[stat] = val
+            if self._gen == 1:
+                self._update_current_stats(self._stats)
 
     def used_z_move(self):
         self._item = None
@@ -1011,6 +1065,14 @@ class Pokemon:
     @stats.setter
     def stats(self, stats: Dict[str, Optional[int]]):
         self._stats = stats
+
+    @property
+    def stats_current(self) -> Dict[str, Optional[int]]:
+        """
+        :return: The pokemon's current stats (with boosts and other modifiers), as a dictionary.
+        :rtype: Dict[str, int | None]
+        """
+        return self._stats_current
 
     @property
     def status(self) -> Optional[Status]:
