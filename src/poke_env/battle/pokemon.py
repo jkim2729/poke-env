@@ -516,7 +516,7 @@ class Pokemon:
         self._boosts = into.boosts.copy()
 
     def _update_current_stats(self,new_stats):
-
+        
         self._stats_current.update(new_stats) 
 
     def _update_from_pokedex(self, species: str, store_species: bool = True):

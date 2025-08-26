@@ -680,72 +680,114 @@ class AbstractBattle(ABC):
                 if mover and self._opponent_active_mon_id and self._player_active_mon_id:
 
 
+                    if len(event) > 4 and event[3] in ('spa','spe','atk','def'):
+                        boost_cat = event[3]
+                        if mover == self.player_role and target == self.player_role:
+                            other_pokemon = self.get_pokemon(self._opponent_active_mon_id)
 
-                    if mover == self.player_role and target == self.player_role:
-                        other_pokemon = self.get_pokemon(self._opponent_active_mon_id)
-                        if 'spe' in event:
-                            if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
-                                pokemon._update_current_stats({'spe':curr_speed})
+
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             other_curr_speed = other_pokemon.stats_current['spe'] 
+                            other_curr_attack= other_pokemon.stats_current['atk'] 
+
                             if other_pokemon.status == Status.PAR and self.gen == 1 and other_curr_speed:
                                 other_curr_speed = max(1,other_curr_speed//4)
                                 other_pokemon._update_current_stats({'spe':other_curr_speed})
-                        elif 'atk' in event:
-                            if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
-                                pokemon._update_current_stats({'atk':curr_attack})
-                            other_curr_attack= other_pokemon.stats_current['atk'] 
-                            if other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
+                            elif other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
                                 other_curr_speed = max(1,other_curr_attack//2)
                                 other_pokemon._update_current_stats({'atk':other_curr_attack})
-                    elif mover == self.player_role and target == self.opponent_role:
-                        other_pokemon = self.get_pokemon(self._player_active_mon_id)
-                        if 'spe' in event:
+                        elif mover == self.player_role and target == self.opponent_role:
+                            other_pokemon = self.get_pokemon(self._player_active_mon_id)
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                curr_speed = pokemon.stats['spe']
                                 if pokemon.status == Status.PAR and self.gen == 1:
                                     curr_speed = max(1,curr_speed//4)
                                 pokemon._update_current_stats({'spe':curr_speed})
 
-                        elif 'atk' in event:
                             if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                curr_attack = pokemon.stats['atk']
                                 if pokemon.status == Status.BRN and self.gen == 1:
                                     curr_attack = max(1,curr_attack//2)
                                 pokemon._update_current_stats({'spe':curr_attack})
 
-                    elif mover == self.opponent_role and target == self.player_role:
-                        if 'spe' in event:
+                        elif mover == self.opponent_role and target == self.player_role:
+
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                curr_speed = pokemon.stats['spe']
                                 if pokemon.status == Status.PAR and self.gen == 1:
                                     curr_speed = max(1,curr_speed//4)
                                 pokemon._update_current_stats({'spe':curr_speed})
 
-                        elif 'atk' in event:
+
                             if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                curr_attack = pokemon.stats['atk']
                                 if pokemon.status == Status.BRN and self.gen == 1:
                                     curr_attack = max(1,curr_attack//2)
                                 pokemon._update_current_stats({'spe':curr_attack})
-                    else:
-                        other_pokemon = self.get_pokemon(self._player_active_mon_id)
-                        if 'spe' in event:
-                            if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
-                                pokemon._update_current_stats({'spe':curr_speed})
+                        else:
+                            
+                            other_pokemon = self.get_pokemon(self._player_active_mon_id)
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
+
+ 
                             other_curr_speed = other_pokemon.stats_current['spe'] 
                             if other_pokemon.status == Status.PAR and self.gen == 1 and other_curr_speed:
                                 other_curr_speed = max(1,other_curr_speed//4)
                                 other_pokemon._update_current_stats({'spe':other_curr_speed})
-                        elif 'atk' in event:
-                            if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
-                                pokemon._update_current_stats({'atk':curr_attack})
+
                             other_curr_attack= other_pokemon.stats_current['atk'] 
                             if other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
-                                other_curr_speed = max(1,other_curr_attack//2)
+                                other_curr_attack = max(1,other_curr_attack//2)
                                 other_pokemon._update_current_stats({'atk':other_curr_attack})
         elif event[1] == "-weather":
             weather = event[2]
@@ -769,71 +811,115 @@ class AbstractBattle(ABC):
                 mover = self._mover
                 if mover and self._opponent_active_mon_id and self._player_active_mon_id:
 
-                    if mover == self.player_role and target == self.player_role:
-                        other_pokemon = self.get_pokemon(self._opponent_active_mon_id)
-                        if 'spe' in event:
-                            if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
-                                pokemon._update_current_stats({'spe':curr_speed})
+
+                    if len(event) > 4 and event[3] in ('spa','spe','atk','def'):
+                        boost_cat = event[3]
+                        if mover == self.player_role and target == self.player_role:
+                            other_pokemon = self.get_pokemon(self._opponent_active_mon_id)
+
+
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             other_curr_speed = other_pokemon.stats_current['spe'] 
+                            other_curr_attack= other_pokemon.stats_current['atk'] 
+
                             if other_pokemon.status == Status.PAR and self.gen == 1 and other_curr_speed:
                                 other_curr_speed = max(1,other_curr_speed//4)
                                 other_pokemon._update_current_stats({'spe':other_curr_speed})
-                        elif 'atk' in event:
-                            if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
-                                pokemon._update_current_stats({'atk':curr_attack})
-                            other_curr_attack= other_pokemon.stats_current['atk'] 
-                            if other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
+                            elif other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
                                 other_curr_speed = max(1,other_curr_attack//2)
                                 other_pokemon._update_current_stats({'atk':other_curr_attack})
-                    elif mover == self.player_role and target == self.opponent_role:
-                        other_pokemon = self.get_pokemon(self._player_active_mon_id)
-                        if 'spe' in event:
+                        elif mover == self.player_role and target == self.opponent_role:
+                            other_pokemon = self.get_pokemon(self._player_active_mon_id)
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                curr_speed = pokemon.stats['spe']
                                 if pokemon.status == Status.PAR and self.gen == 1:
                                     curr_speed = max(1,curr_speed//4)
                                 pokemon._update_current_stats({'spe':curr_speed})
 
-                        elif 'atk' in event:
                             if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                curr_attack = pokemon.stats['atk']
                                 if pokemon.status == Status.BRN and self.gen == 1:
                                     curr_attack = max(1,curr_attack//2)
                                 pokemon._update_current_stats({'spe':curr_attack})
 
-                    elif mover == self.opponent_role and target == self.player_role:
-                        if 'spe' in event:
+                        elif mover == self.opponent_role and target == self.player_role:
+
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
                             if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                curr_speed = pokemon.stats['spe']
                                 if pokemon.status == Status.PAR and self.gen == 1:
                                     curr_speed = max(1,curr_speed//4)
                                 pokemon._update_current_stats({'spe':curr_speed})
 
-                        elif 'atk' in event:
+
                             if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                curr_attack = pokemon.stats['atk']
                                 if pokemon.status == Status.BRN and self.gen == 1:
                                     curr_attack = max(1,curr_attack//2)
                                 pokemon._update_current_stats({'spe':curr_attack})
-                    else:
-                        other_pokemon = self.get_pokemon(self._player_active_mon_id)
-                        if 'spe' in event:
-                            if pokemon.stats['spe']:
-                                curr_speed = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
-                                pokemon._update_current_stats({'spe':curr_speed})
+                        else:
+                            
+                            other_pokemon = self.get_pokemon(self._player_active_mon_id)
+                            if boost_cat == 'spe' and pokemon.stats['spe']:
+                                    curr_stat = pokemon.stats['spe'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spe'])
+                                    pokemon._update_current_stats({'spe':curr_stat})
+                            elif boost_cat == 'atk' and pokemon.stats['atk']:
+                                curr_stat = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
+                                pokemon._update_current_stats({'atk':curr_stat})
+                            elif boost_cat == 'def' and pokemon.stats['def']:
+                                curr_stat = pokemon.stats['def'] * pokemon.boost_to_num(self.gen,pokemon.boosts['def'])
+                                pokemon._update_current_stats({'def':curr_stat})
+                            elif boost_cat == 'spa' and pokemon.stats['spa']:
+                                curr_stat = pokemon.stats['spa'] * pokemon.boost_to_num(self.gen,pokemon.boosts['spa'])
+                                pokemon._update_current_stats({'spa':curr_stat,'spd':curr_stat})
+
+
+ 
                             other_curr_speed = other_pokemon.stats_current['spe'] 
                             if other_pokemon.status == Status.PAR and self.gen == 1 and other_curr_speed:
                                 other_curr_speed = max(1,other_curr_speed//4)
                                 other_pokemon._update_current_stats({'spe':other_curr_speed})
-                        elif 'atk' in event:
-                            if pokemon.stats['atk']:
-                                curr_attack = pokemon.stats['atk'] * pokemon.boost_to_num(self.gen,pokemon.boosts['atk'])
-                                pokemon._update_current_stats({'atk':curr_attack})
+
                             other_curr_attack= other_pokemon.stats_current['atk'] 
                             if other_pokemon.status == Status.BRN and self.gen == 1 and other_curr_attack:
-                                other_curr_speed = max(1,other_curr_attack//2)
+                                other_curr_attack = max(1,other_curr_attack//2)
                                 other_pokemon._update_current_stats({'atk':other_curr_attack})
         elif event[1] == "-ability":
             pokemon, cause = event[2:4]
@@ -876,7 +962,18 @@ class AbstractBattle(ABC):
                 self.get_pokemon(target).start_effect(effect)
         elif event[1] == "-status":
             pokemon, status = event[2:4]
-            self.get_pokemon(pokemon).status = status  # type: ignore
+            pokemon = self.get_pokemon(pokemon)# type: ignore
+            pokemon.status  = status  
+            if self.gen == 1:
+                if pokemon.status == Status.PAR:
+                    speed = pokemon.stats_current['spe']
+                    if speed:
+                        pokemon._update_current_stats({'spe':speed//4})
+                elif pokemon.status == Status.BRN:
+                    speed = pokemon.stats_current['atk']
+                    if speed:
+                        pokemon._update_current_stats({'atk':speed//4})
+                
         elif event[1] == "rule":
             self.rules.append(event[2])
 
