@@ -482,11 +482,11 @@ class Pokemon:
         self.clear_boosts()
         self._clear_effects()
         if self._gen == 1:
-            self._update_current_stats(self.stats)
-            if self._status == Status.BRN and self.stats['atk']:
-                self._update_current_stats({'atk': self.stats['atk'] // 2})
-            elif self._status == Status.PAR and self.stats['spe']:
-                self._update_current_stats({'spe': self.stats['spe'] // 4})
+            self._update_current_stats(self._stats)
+            if self._status == Status.BRN and self._stats['atk']:
+                self._update_current_stats({'atk': self._stats['atk'] // 2})
+            elif self._status == Status.PAR and self._stats['spe']:
+                self._update_current_stats({'spe': self._stats['spe'] // 4})
 
         self._first_turn = False
         self._must_recharge = False
@@ -516,7 +516,7 @@ class Pokemon:
         self._boosts = into.boosts.copy()
 
     def _update_current_stats(self,new_stats):
-        
+        print(new_stats)
         self._stats_current.update(new_stats) 
 
     def _update_from_pokedex(self, species: str, store_species: bool = True):
@@ -627,8 +627,15 @@ class Pokemon:
         if "stats" in request_pokemon:
             for stat in request_pokemon["stats"]:
                 self._stats[stat] = request_pokemon["stats"][stat]
+
+
                 if self._gen == 1:
-                    self._update_current_stats(self._stats)
+                    new_stats = {}
+                    for stat in self._stats_current:
+                        if self._stats_current[stat] is None:
+                            new_stats[stat] = self._stats[stat]
+                    if new_stats:
+                        self._update_current_stats(new_stats)
 
     def _update_from_teambuilder(self, tb: TeambuilderPokemon):
         if tb.nickname is not None and tb.species is None:

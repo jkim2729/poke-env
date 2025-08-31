@@ -63,7 +63,6 @@ class Battle(AbstractBattle):
             self._wait = False
 
         side = request["side"]
-
         self._available_moves = []
         self._available_switches = []
         self._can_mega_evolve = False
